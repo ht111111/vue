@@ -45,8 +45,8 @@
         </template>
       </el-table-column>
       <el-table-column label="状态" width="150px" class-name="status-col" align="center">
-        <template slot-scope="{row}" >
-          <el-tag  >
+        <template slot-scope="{row}"     >
+          <el-tag >
             {{ row.status === 1 ? '已上架' : '已下架' }}
           </el-tag>
         </template>
@@ -76,7 +76,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
     
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen="true">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="标题" prop="title">
           <el-input v-model="temp.title" />

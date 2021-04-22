@@ -64,7 +64,7 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="330" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="warning" size="mini" @click="handleUpdate(row)">
+          <el-button type="warning" size="mini" @click="handleDirectory(row.id)">
             目录
           </el-button>
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -85,7 +85,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen="true">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
        
         <el-form-item label="标题" prop="title">
@@ -295,6 +295,11 @@ export default {
         }
       })
     },
+
+    handleDirectory(id){
+      this.$router.push({ name: 'column_detail', query: { id: id } })
+    },
+
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)

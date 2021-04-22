@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -175,63 +175,240 @@ export const asyncRoutes = [
           title: '专栏',
           roles: ['admin'] // or you can only set roles in sub nav
         }
+      },{
+        hidden:true,
+        path:'course/column_detail',
+        component:()=>import('@/views/course/column_detail'),
+        name:"column_detail",
+        meta:{
+          title:'专栏详情',
+          roles:['admin']
+        }
       }
     ]
   },
-  {
-      path: '/user',
-      component: Layout,
-      children: [
-        {
-          path: 'user',
-          component: () => import('@/views/user/user'),
-          name: 'User',
-          meta: { title: '用户', icon: 'user' }
-        }
-      ]
-   },
 
-  // {
-  //   path: '/permission',
-  //   component: Layout,
-  //   redirect: '/permission/page',
-  //   alwaysShow: true, // will always show the root menu
-  //   name: 'Permission',
-  //   meta: {
-  //     title: 'Permission',
-  //     icon: 'lock',
-  //     roles: ['admin', 'editor'] // you can set roles in root nav
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'Page Permission',
-  //         roles: ['admin'] // or you can only set roles in sub nav
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'Directive Permission'
-  //         // if do not set roles, means: this page does not require permission
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role'),
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'Role Permission',
-  //         roles: ['admin']
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/user/user'),
+        name: 'User',
+        meta: { title: '用户', icon: 'user' }
+      }
+    ]
+  },
+
+  {
+    path: '/pay',
+    component: Layout,
+    redirect: '/pay/order',
+    name: 'Pay',
+    meta: {
+      title: '交易',
+      icon: 'education',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'pay/order',
+        component: () => import('@/views/pay/payorder'),
+        name: "Order",
+        meta: {
+          title: '订单管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'pay/assets',
+        component: () => import('@/views/pay/assets'),
+        name: "Assets",
+        meta: {
+          title: '资产管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'pay/payment',
+        component: () => import('@/views/pay/payment'),
+        name: "Payment",
+        meta: {
+          title: '支付管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+
+  {
+    path: '/renovation',
+    component: Layout,
+    redirect: '/renovation/mobile_index',
+    name: 'Mobile_index',
+    meta: {
+      title: '可视化',
+      icon: 'education',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path:'/renovation/mobile_index',
+        component:()=>import('@/views/renovation/mobile_index'),
+        name:"mobile_index",
+        meta:{
+          title:"移动端",
+          roles:['admin']
+        }
+      },
+      {
+        path: 'renovation/pc_index',
+        component: () => import('@/views/renovation/pc_index'),
+        name: "pc_index",
+        meta: {
+          title: 'pc端',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+  
+  {
+    path: '/marketing',
+    component: Layout,
+    redirect: '/marketing/group',
+    name: 'Group',
+    meta: {
+      title: '营销',
+      icon: 'education',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path:'/marketing/group',
+        component:()=>import('@/views/marketing/group'),
+        name:"Group",
+        meta:{
+          title:"拼团",
+          roles:['admin']
+        }
+      },
+      {
+        path: 'marketing/flashsale',
+        component: () => import('@/views/marketing/flashsale'),
+        name: "Flashsale",
+        meta: {
+          title: '秒杀',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'marketing/coupon',
+        component: () => import('@/views/marketing/coupon'),
+        name: "Coupon",
+        meta: {
+          title: '优惠券',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/tool',
+    component: Layout,
+    redirect: '/tool/bbs',
+    name: 'Bbs',
+    meta: {
+      title: '工具',
+      icon: 'education',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path:'/tool/bbs',
+        component:()=>import('@/views/tool/bbs'),
+        name:"Bbs",
+        meta:{
+          title:"小社群",
+          roles:['admin']
+        }
+      },
+      {
+        path: 'tool/question',
+        component: () => import('@/views/tool/question'),
+        name: "Question",
+        meta: {
+          title: '题库',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'tool/testpaper',
+        component: () => import('@/views/tool/testpaper'),
+        name: "Testpaper",
+        meta: {
+          title: '试卷',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'tool/book',
+        component: () => import('@/views/tool/book'),
+        name: "Book",
+        meta: {
+          title: '电子书',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/setting',
+    component: Layout,
+    redirect: '/setting/setting_index',
+    name: 'setting_index',
+    meta: {
+      title: '设置',
+      icon: 'education',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path:'setting/setting_index',
+        component:()=>import('@/views/setting/setting_index'),
+        name:"setting_index",
+        meta:{
+          title:"店铺设置",
+          roles:['admin']
+        }
+      },
+      {
+        path: 'setting/staffs',
+        component: () => import('@/views/setting/staffs'),
+        name: "Staffs",
+        meta: {
+          title: '员工管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'setting/role',
+        component: () => import('@/views/setting/role'),
+        name: "Role",
+        meta: {
+          title: '角色设置',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+
 
   {
     path: '/icon',
@@ -245,6 +422,9 @@ export const asyncRoutes = [
       }
     ]
   },
+
+
+
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,

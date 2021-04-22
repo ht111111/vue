@@ -1,8 +1,27 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+   
+    <el-card style="height:180px" >
+          <div style="float:right " >
+            {{ detail.isend === 1 ? '连载中' : '已完结' }}
+          </div>
+          <div style="display:flex">
+            <img :src='detail.cover' style="height:120px">
+            <div style=" margin-left:10px">
+              <div>{{ detail.title }}</div>
+              <div>{{ detail.content}}</div>
+              <div style="margin-top:40px;float:left;color:red">￥{{ detail.price }}</div>
+            </div>
+          </div>
+          <div class="button">
+            <el-button  type="warning" @click='handlexiajia(detail)' >{{ detail.status === 1 ? "下架" : "上架" }}</el-button>
+            <el-button type="danger"  @click='handlewanjie(detail)'>{{ detail.isend === 0 ? "设置连载中" : "设置已完结" }}</el-button>
+          </div>
+    </el-card>
+
+    <div class="filter-container" style="margin-top:30px">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增视频
+        新增目录
       </el-button>
       <el-button v-waves class="filter-item" style="float:right" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -27,7 +46,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="图文内容" width="800px" align="center">
+      <el-table-column label="单品内容" width="1000px" >
         <template slot-scope="{row}">
           <div style="display:flex">
             <img :src='row.cover' style="height:51px">
@@ -35,11 +54,10 @@
               <div>{{ row.title }}</div>
               <div style="margin-top:5px;float:left;color:red">￥{{ row.price }}</div>
             </div>
-        
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="订阅量" width="150px" align="center">
+      <el-table-column label="订阅量" width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.sub_count }}</span>
         </template>
@@ -51,55 +69,105 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.created_time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="330" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
-          </el-button>
-          <el-button v-if="row.status!=1" size="mini" type="success" @click="handleModifyStatus(row,1)">
-            上架
-          </el-button>
-          <el-button v-if="row.status!=0" size="mini" type="danger" @click="handleModifyStatus(row,0)">
-            下架
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
-      </el-table-column>
+        </el-table-column>
+            <el-table-column align="center" label="Drag" width="80">
+            <template slot-scope="{}">
+            <svg-icon class="drag-handler" icon-class="drag" />
+            </template>
+        </el-table-column>
     </el-table> 
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen="true">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-       
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="试看内容" >
-          <!-- <markdown-editor v-model="content" /> -->
-          <Tinymce ref="editor" v-model="temp.content" :height="400" :width="600" />
-        </el-form-item>
-        <el-form-item label="课程内容" >
-          <!-- <markdown-editor v-model="content" /> -->
-          <Tinymce ref="editor" v-model="temp.content" :height="400" :width="600" />
-        </el-form-item>
-        <el-form-item label="课程价格">
-           <el-input-number v-model="temp.price"  :min="1"  label="描述文字"></el-input-number>
-        </el-form-item>
-        <el-form-item label="状态">
-             <el-radio-group v-model="temp.status">
-                <el-radio :label="0">下架</el-radio>
-                <el-radio :label="1">上架</el-radio>
-              </el-radio-group>
-        </el-form-item>
-      </el-form>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen:true>
+
+    <el-tabs tab-position="left"  style="height:500px" >
+      <el-tab-pane label="图文">
+        <el-table ref="multipleTable"
+            v-loading="listLoading"
+            :data="list"
+            element-loading-text="拼命加载中"
+            border
+            fit
+            highlight-current-row
+            @selection-change="handleSelectionChange"
+         >
+          <el-table-column type="selection" align="center" />
+          <el-table-column label="单品内容" width="1000px" >
+            <template slot-scope="{row}">
+              <div style="display:flex">
+                <img :src='row.cover' style="height:51px">
+                <div style=" margin-left:10px">
+                <div>{{ row.title }}</div>
+                <div style="margin-top:5px;float:left;color:red">￥{{ row.price }}</div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+     <el-tab-pane label="音频">
+        <el-table ref="multipleTable"
+            v-loading="listLoading"
+            :data="list"
+            element-loading-text="拼命加载中"
+            border
+            fit
+            highlight-current-row
+            @selection-change="handleSelectionChange"
+         >
+          <el-table-column type="selection" align="center" />
+          <el-table-column label="单品内容" width="1000px" >
+            <template slot-scope="{row}">
+              <div style="display:flex">
+                <img :src='row.cover' style="height:51px">
+                <div style=" margin-left:10px">
+                <div>{{ row.title }}</div>
+                <div style="margin-top:5px;float:left;color:red">￥{{ row.price }}</div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+   <el-tab-pane label="视频">
+        <el-table ref="multipleTable"
+            v-loading="listLoading"
+            :data="list"
+            element-loading-text="拼命加载中"
+            border
+            fit
+            highlight-current-row
+            @selection-change="handleSelectionChange"
+         >
+          <el-table-column type="selection" align="center" />
+          <el-table-column label="单品内容" width="1000px" >
+            <template slot-scope="{row}">
+              <div style="display:flex">
+                <img :src='row.cover' style="height:51px">
+                <div style=" margin-left:10px">
+                <div>{{ row.title }}</div>
+                <div style="margin-top:5px;float:left;color:red">￥{{ row.price }}</div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+
+
+      
+     
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           Cancel
@@ -110,6 +178,10 @@
       </div>
     </el-dialog>
 
+
+
+
+
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -119,16 +191,17 @@
         <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
       </span>
     </el-dialog> 
+
+
+
   </div>
 </template>
 
 <script>
-// import {fetchList} from '@/api/user'
-import { fetchList,  fetchPv, createVideo, updateVideo } from '@/api/video'
+import { fetchDetailCourse, fetchDetail, fetchPv, createColumn, updateColumn } from '@/api/column'
 import waves from '@/directive/waves' // waves directive
-
-import { parseTime } from '@/utils'
 import Tinymce from '@/components/Tinymce/index'
+import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -166,6 +239,7 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
+      detail:null,
       listLoading: true,
       listQuery: {
         page: 1,
@@ -211,10 +285,16 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      console.log(this.$route.query.id)
+
+      fetchDetail({id:this.$route.query.id}).then(response =>{
+          this.detail = response.data
+          console.log(this.detail)
+      })
+
+      fetchDetailCourse(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = response.data.total
-        console.log(this.list)
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -232,6 +312,25 @@ export default {
       })
       row.status = status
     },
+
+    handlexiajia(detail){
+        if(detail.status === 1){
+          this.detail.status = 0
+        } else{
+           this.detail.status = 1
+        }
+    },
+
+    handlewanjie(detail){
+      if(detail.isend === 1){
+        this.detail.isend = 0 
+      } else{
+        this.detail.isend = 1
+      }
+    },
+
+
+
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
@@ -270,7 +369,7 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createVideo(this.temp).then(() => {
+          createColumn(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -283,6 +382,8 @@ export default {
         }
       })
     },
+
+
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
@@ -297,7 +398,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateVideo(tempData).then(() => {
+          updateColumn(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -340,6 +441,10 @@ export default {
         this.downloadLoading = false
       })
     },
+
+
+
+
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
@@ -356,3 +461,9 @@ export default {
   }
 }
 </script>
+
+
+<style  lang="scss">
+ 
+
+</style>
