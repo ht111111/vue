@@ -43,7 +43,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="330" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+        <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             详情
           </el-button>
@@ -57,8 +57,8 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
     
 
-    <el-dialog   :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen:true>
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left"  style="width: 800px; margin-left:50px;">
+    <el-dialog   :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" fullscreen:true >
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left"  style="width:900px; height:600px margin-left:50px;">
                <el-form-item>
                    ID:<span> {{ temp.user.id }} </span> 
                    用户名：<span> {{ temp.user.username }}</span>
@@ -72,9 +72,9 @@
                    注册时间:<span>{{ temp.user.created_time }}</span>
                </el-form-item>
                <el-form-item>
-                     <el-tabs tab-position="top" style="height: 500px;" @tab-click="handleClick">
+                     <el-tabs tab-position="top" style="height: 400px;" v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane label="课程订阅" name="course">
-                            <el-table :data="userList">
+                            <el-table :data="userList"  max-height="300">
                                 <el-table-column label="课程标题">
                                      <template slot-scope="{row}">
                                         {{ row.title}}
@@ -93,7 +93,7 @@
                             </el-table>  
                         </el-tab-pane>
                         <el-tab-pane label="专栏记录" name="column">
-                            <el-table :data="userList">
+                            <el-table :data="userList"  max-height="300">
                                 <el-table-column label="专栏标题">
                                      <template slot-scope="{row}">
                                         {{ row.title}}
@@ -112,7 +112,7 @@
                             </el-table>  
                         </el-tab-pane>
                         <el-tab-pane label="订单记录" name="order">
-                            <el-table :data="userList">
+                            <el-table :data="userList"  max-height="300">
                                 <el-table-column label="ID">
                                    <template slot-scope="{row}">
                                         {{ row.id}}
@@ -146,7 +146,7 @@
                             </el-table>  
                         </el-tab-pane >
                         <el-tab-pane label="观看历史" name="history">
-                            <el-table :data="userList">
+                            <el-table :data="userList"  max-height="300">
                                 <el-table-column label="课程标题">
                                     <template slot-scope="{row}">
                                         {{ row.title}}
@@ -165,7 +165,7 @@
                             </el-table>  
                         </el-tab-pane>
                         <el-tab-pane label="用户评论" name="comment">
-                            <el-table :data="userList">
+                            <el-table :data="userList" max-height="300">
                                 <el-table-column label="评论内容">
                                      <template slot-scope="{row}">
                                         {{ row.content}}
@@ -188,12 +188,14 @@
                                 </el-table-column>
                             </el-table>  
                         </el-tab-pane>
+      
                     </el-tabs>
                </el-form-item>
            <!-- <span> {{ temp.username }} </span>
            <span>{{ temp.nickname === '' ? "未设置" : temp.nickname }}</span> -->
 
       </el-form>
+      <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           Cancel
@@ -202,6 +204,7 @@
           Confirm
         </el-button>
       </div>
+
     </el-dialog>
 
     <el-dialog     :visible.sync="dialogPvVisible" title="Reading statistics">
@@ -218,7 +221,7 @@
 
 <script>
 // import {fetchList} from '@/api/user'
-import { fetchList, fetchUserComment, fetchUserHistory, fetchUserColumn, fetchUserOrder  ,  fetchUserCourse, createMedia, updateMedia } from '@/api/user'
+import { fetchList, fetchUserComment, fetchUserHistory, fetchUserColumn, fetchUserOrder  ,  fetchUserCourse} from '@/api/user'
 
 import Tinymce from '@/components/Tinymce/index'
 
@@ -475,35 +478,35 @@ export default {
            fetchUserCourse(this.listQuery).then(response => {
               // console.log(response.data.items)
               this.userList =response.data.items
-              this.total = response.data.total
+              this.total1 = response.data.total
 
         })
         } if(name === "column"){
             fetchUserColumn(this.listQuery).then(response => {
                 // console.log(response.data.items)
                 this.userList =response.data.items
-                this.total = response.data.total
+                this.total1 = response.data.total
             
             })
         } if(name === "order"){
                fetchUserOrder(this.listQuery).then(response => {
                   // console.log(response.data.items)
                   this.userList =response.data.items
-                  this.total = response.data.total
+                  this.total1 = response.data.total
             
             })
         } if(name === "history"){
                fetchUserHistory(this.listQuery).then(response => {
                   // console.log(response.data.items)
                   this.userList =response.data.items
-                  this.total = response.data.total
+                  this.total1 = response.data.total
             
             })
         } if(name === "comment"){
                fetchUserComment(this.listQuery).then(response => {
                   console.log(response.data.items)
                   this.userList =response.data.items
-                  this.total = response.data.total
+                  this.total1 = response.data.total
             
             })
         } 
